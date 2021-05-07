@@ -1,0 +1,69 @@
+version: 1.0
+config:
+  gpus: 8
+  seed: 2020
+  dataset:
+    workers: 5
+    num_class: 174
+    num_segments: 8
+    batch_size: 8
+    img_prefix: '{:05d}.jpg'
+    video_source: False
+    dense_sample: False
+    modality: RGB
+    flow_prefix: ''
+    root_dir: datasets/20bn-something-something-v1/
+    flip: False
+    dense_sample_rate: 8
+    input_mean: [0.485, 0.456, 0.406]
+    input_std: [0.229, 0.224 ,0.225]
+    crop_size: 224
+    scale_size: 256
+    train:
+      meta_file: datasets/train_sthv1.txt
+    val:
+      meta_file: datasets/val_sthv1.txt
+    test:
+      meta_file: datasets/val_sthv1.txt
+
+  net:
+    arch: resnet50
+    model_type: 2D
+    shift: True
+    shift_div: 8
+    transformer: True
+    has_att: True
+    consensus_type: avg
+    dropout: 0.5
+    img_feature_dim: 256
+    non_local: False
+    pretrain: True # imagenet pretrain for 2D network
+
+
+  trainer:
+    print_freq: 100
+    eval_freq: 1
+    epochs: 50
+    start_epoch: 0
+    loss_type: nll
+    no_partial_bn: True
+    clip_gradient: 20
+    lr_scheduler:
+      warmup_epochs: 0
+      type: MultiStepLR
+      kwargs:
+        milestones: [30, 40, 45]
+        gamma: 0.1
+    optimizer:
+      type: SGD
+      kwargs:
+        lr: 0.01
+        momentum: 0.9
+        weight_decay: 0.001
+        nesterov: True
+
+
+  saver:
+    save_dir: 'checkpoint/'
+    #pretrain_path: '/path'
+    #resume_model: ''
